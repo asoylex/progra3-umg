@@ -1,0 +1,1 @@
+clang++ -framework Foundation -framework AppKit -framework AVFoundation -x objective-c++ project.cpp -o project -lcurl
