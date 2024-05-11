@@ -32,6 +32,47 @@ std::string makeHttpRequest(const std::string& url) {
 
     return response;
 }
+std::string extractTranslatedText(const std::string& jsonResponse) {
+    // Busca la posición de "translatedText"
+    size_t pos = jsonResponse.find("\"translatedText\"");
+
+    // Verifica si se encontró la cadena
+    if (pos == std::string::npos) {
+        std::cerr << "No se encontró la clave 'translatedText' en la respuesta JSON" << std::endl;
+        return "";
+    }
+
+    // Busca el inicio del valor de "translatedText"
+    size_t start = jsonResponse.find(':', pos);
+    if (start == std::string::npos) {
+        std::cerr << "Error al encontrar el inicio del valor de 'translatedText'" << std::endl;
+        return "";
+    }
+
+    // Busca el final del valor de "translatedText"
+    size_t end = jsonResponse.find_first_of(",}", start);
+    if (end == std::string::npos) {
+        std::cerr << "Error al encontrar el final del valor de 'translatedText'" << std::endl;
+        return "";
+    }
+
+    // Extrae el valor de "translatedText"
+    std::string translatedText = jsonResponse.substr(start + 3, end - start - 4); // +3 y -4 para eliminar comillas y espacios
+
+    return translatedText;
+}
+NSString* voiceIdentifierForLanguage(const std::string& language) {
+    // Mapear el idioma a la identificación de voz adecuada
+    if (language == "es") {
+        return @"com.apple.speech.synthesis.voice.diego";
+    } else if (language == "en") {
+        return @"com.apple.speech.synthesis.voice.samantha";
+    } else if (language == "fr") {
+        return @"com.apple.speech.synthesis.voice.thomas";
+    }
+    // Por defecto, devolver la voz en inglés
+    return @"com.apple.speech.synthesis.voice.samantha";
+}
 
 int main() {
     std::string apiKey = "AIzaSyAEMUbDuImkLj9olXF-Mya0G1v2Vowd6uQ";
